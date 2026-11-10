@@ -98,18 +98,41 @@ private fun LazyListScope.juicitySettings(
             summary = { Text(contentOrUnset(uiState.address)) },
             valueToText = { it },
         )
+        // 单个「服务器端口」输入：支持 443 或 50000-50050（与 Hysteria 端口跳跃输入习惯一致）
         TextFieldPreference(
-            value = uiState.port,
-            onValueChange = { viewModel.setPort(it) },
+            value = uiState.serverPorts,
+            onValueChange = { viewModel.setServerPorts(it) },
             title = { Text(stringResource(Res.string.server_port)) },
-            textToValue = { it.toIntOrNull() ?: 443 },
+            textToValue = { it },
             icon = {
                 MaskedIcon(
                     Res.drawable.directions_boat,
                     color = IconMaskColors.IconLightOrange,
                 )
             },
-            summary = { Text(contentOrUnset(uiState.port)) },
+            summary = { Text(contentOrUnset(uiState.serverPorts)) },
+            valueToText = { it },
+        )
+        TextFieldPreference(
+            value = uiState.portHopInterval,
+            onValueChange = { viewModel.setPortHopInterval(it) },
+            title = { Text("端口跳跃间隔 (秒)") },
+            textToValue = { it.toIntOrNull() ?: 0 },
+            icon = {
+                MaskedIcon(
+                    Res.drawable.directions_boat,
+                    color = IconMaskColors.IconLightOrange,
+                )
+            },
+            summary = {
+                Text(
+                    if (uiState.portHopInterval <= 0) {
+                        "0 = 仅新建连接时随机端口"
+                    } else {
+                        "${uiState.portHopInterval} 秒"
+                    },
+                )
+            },
             valueToText = { it.toString() },
             textField = { state, onOk ->
                 UIntegerTextField(state, onOk)
