@@ -14,7 +14,9 @@ internal data class JuicityUiState(
     override val customOutbound: String = "",
     val name: String = "",
     val address: String = "127.0.0.1",
-    val port: Int = 443,
+    /** 端口或范围，如 443 / 50000-50050 */
+    val serverPorts: String = "443",
+    val portHopInterval: Int = 0,
     val uuid: String = "",
     val password: String = "",
     val sni: String = "",
@@ -36,7 +38,8 @@ internal class JuicitySettingsViewModel : ProfileEditorViewModel<JuicityBean>() 
                 customOutbound = customOutboundJson,
                 name = name,
                 address = serverAddress,
-                port = serverPort,
+                serverPorts = serverPorts.ifBlank { serverPort.toString() },
+                portHopInterval = portHopInterval,
                 uuid = uuid,
                 password = password,
                 sni = sni,
@@ -53,7 +56,11 @@ internal class JuicitySettingsViewModel : ProfileEditorViewModel<JuicityBean>() 
         customOutboundJson = state.customOutbound
         name = state.name
         serverAddress = state.address
-        serverPort = state.port
+        serverPorts = state.serverPorts.ifBlank { "443" }
+        serverPort = serverPorts.split(',', '-', ' ')
+            .mapNotNull { it.trim().toIntOrNull() }
+            .firstOrNull() ?: 443
+        portHopInterval = state.portHopInterval.coerceAtLeast(0)
         uuid = state.uuid
         password = state.password
         sni = state.sni
@@ -77,8 +84,12 @@ internal class JuicitySettingsViewModel : ProfileEditorViewModel<JuicityBean>() 
         uiState.update { it.copy(address = address) }
     }
 
-    fun setPort(port: Int) {
-        uiState.update { it.copy(port = port) }
+    fun setServerPorts(ports: String) {
+        uiState.update { it.copy(serverPorts = ports) }
+    }
+
+    fun setPortHopInterval(interval: Int) {
+        uiState.update { it.copy(portHopInterval = interval.coerceAtLeast(0)) }
     }
 
     fun setUuid(uuid: String) {
