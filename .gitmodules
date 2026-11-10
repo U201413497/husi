@@ -3,7 +3,7 @@
 	url = https://github.com/HyNetworks/hysteria.git
 [submodule "plugin/juicity/src/main/go/juicity"]
 	path = plugin/juicity/src/main/go/juicity
-	url = https://github.com/juicity/juicity.git
+	url = https://github.com/U201413497/juicity.git
 [submodule "plugin/naive/src/main/jni/naiveproxy"]
 	path = plugin/naive/src/main/jni/naiveproxy
 	url = https://github.com/klzgrad/naiveproxy.git
